@@ -378,7 +378,9 @@ ZMK 没有 Arduino 的 `loop()`，改用 **GPIO hog** 在系统初始化时把 P
 |蓝牙连不上 / 配对乱|刷 `settings_reset` 固件清空，再刷主固件重新配对。|
 
 ---
-
+## 已上传编译好的固件
+settings_reset-xiao_ble-zmk.uf2
+high-resolution-scroll-wheel-xiao_ble-zmk.uf2
 
 
 
