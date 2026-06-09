@@ -6,7 +6,7 @@
 
 一个使用 [ams AS5600](https://ams-osram.com/products/sensor-solutions/position-sensors/ams-as5600-position-sensor) 磁性旋转位置传感器的 [ZMK](https://github.com/zmkfirmware/zmk) 配置，用于“高分辨率滚轮”。  
 该项目灵感来自 [Engineer Bo](https://www.youtube.com/@engineerbo) 的视频[《无线高分辨率滚动真神奇](https://www.youtube.com/watch?v=FSy9G6bNuKA)》，应作为使用 [ZMK](https://github.com/zmkfirmware/zmk) 键盘固件的开源替代方案。
-记得先fork https://github.com/adolto/zmk-config-high-resolution-scroll-wheel和https://github.com/adolto/zmk-driver-ams-as5600
+记得先fork https://github.com/adolto/zmk-config-high-resolution-scroll-wheel  和   https://github.com/adolto/zmk-driver-ams-as5600
 
 目前我已经使用as5600模块和super nrf52840用于替代`adolto` XIAO nrf52840，使用nice nano克隆板子也是跑的通的，我已测试
 
