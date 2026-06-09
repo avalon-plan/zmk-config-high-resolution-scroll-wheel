@@ -13,7 +13,6 @@
  */
 &xiao_i2c {
     status = "okay";
-
     as5600: as5600@36 {
         compatible = "zmk,input-ams-as5600";
         reg = <0x36>;
@@ -22,9 +21,7 @@
 };
 
 / {
-    /* 👉 就是这一行！加上它就能通过最后的检查 */
     compatible = "zmk,keyboard";
-
     chosen {
         zmk,kscan = &kscan;
     };
