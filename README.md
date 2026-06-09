@@ -402,6 +402,15 @@ AS5600模块的定位板的M4孔感觉比模型画的大，所以可以使用小
 ![1780980689429.jpg](https://m.comicplan.top/file/1780980768203_1780980689429.jpg)
 ![1780980689452.jpg](https://m.comicplan.top/file/1780980769860_1780980689452.jpg)
 
+## 视频展示在iPadOS上和安卓平板上的滚轮滚动的分辨率
+
+High-Resolution Scroll Wheel在iPadOS26.5上的表现
+https://youtu.be/WPCux59D0Ts
+
+High-Resolution Scroll Wheel在安卓平板16上的表现
+https://youtu.be/RM9ZKItSbio
+
+
 ## 高分辨旋钮测试环节
 网页测试 
 [So You Think You Can Scroll](https://engineerbo.github.io/so-you-think-you-can-scroll/)
