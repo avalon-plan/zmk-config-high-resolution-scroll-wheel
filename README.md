@@ -416,7 +416,7 @@ AS5600模块的定位板的M4孔感觉比模型画的大，所以可以使用小
 ![Screenshot_2026-05-31-21-56-30-32_64ef5fc2000c1caa954c114bb372e1d5.jpg](https://m.comicplan.top/file/1780980535227_Screenshot_2026-05-31-21-56-30-32_64ef5fc2000c1caa954c114bb372e1d5.jpg)
 
 ## 成品展示
-最终成品是直径70mm 全高是28.5mm
+最终成品是直径70mm 全高是28.5mm为左侧的旋钮，上盖尺寸跟Engineer Bo是一致的。右边的旋钮是早期自己使用EC11制作的旋钮直径同样是70mm 高度为35mm，灵感来源是geekhack上的NEO KNOB KN01
 ![1780980689383.jpg](https://m.comicplan.top/file/1780980776791_1780980689383.jpg)
 ![1780980689429.jpg](https://m.comicplan.top/file/1780980768203_1780980689429.jpg)
 ![1780980689452.jpg](https://m.comicplan.top/file/1780980769860_1780980689452.jpg)
