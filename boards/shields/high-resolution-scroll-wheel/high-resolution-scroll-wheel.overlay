@@ -22,6 +22,8 @@
 
 / {
     compatible = "zmk,keyboard";
+    status = "okay";
+
     chosen {
         zmk,kscan = &kscan;
     };
