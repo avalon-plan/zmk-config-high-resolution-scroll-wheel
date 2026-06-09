@@ -227,33 +227,42 @@ D1（蓝牙）:  轻触     = 切换到下一个蓝牙配对档位 (BT_NXT)
 
 主要选项在 `config/high-resolution-scroll-wheel.conf`：
 
-```conf
-# 指针 + 高分辨率（平滑）滚动
+# --- Pointing device + HIGH-RESOLUTION (smooth) scrolling ---
 CONFIG_ZMK_POINTING=y
 CONFIG_ZMK_POINTING_SMOOTH_SCROLLING=y
 
-# AS5600 驱动
+# --- AS5600 driver ---
 CONFIG_ZMK_INPUT_AMS_AS5600=y
 
-# 传感器侧降噪（减少静止抖动）
+# Sensor-side noise filtering (less idle jitter)
 CONFIG_ZMK_INPUT_AMS_AS5600_HYSTERESIS_2LSB=y
 CONFIG_ZMK_INPUT_AMS_AS5600_SLOW_FILTER_16X=y
 CONFIG_ZMK_INPUT_AMS_AS5600_FAST_FILTER_THRESHOLD_7LSB=y
 
-# 强制启用 BLE/USB 端点（修复 resolution_multipliers 数组越界）
+# --- First bring-up only ---
+# Uncomment to print AGC + status over USB serial so you can set the magnet
+# air gap (aim for AGC near the middle of its range). Turn off once tuned.
+# 将这行注释掉，或者改为 =n
+# CONFIG_ZMK_INPUT_AMS_AS5600_LOG_AGC=n
+# --- Force enable endpoints (Fix for resolution_multipliers array bounds error) ---
 CONFIG_ZMK_BLE=y
 CONFIG_ZMK_USB=y
 CONFIG_BT=y
 CONFIG_USB_DEVICE_STACK=y
-
-# 增大蓝牙发送缓冲，应对高频滚动
+# --- 增加蓝牙发送缓冲区以应对高频滚动 ---
 CONFIG_BT_L2CAP_TX_BUF_COUNT=10
 CONFIG_BT_CONN_TX_MAX=10
 
-# 无数字键设备：关闭蓝牙配对码输入
 CONFIG_BT_SMP_ALLOW_UNAUTH_OVERWRITE=y
+# 关闭蓝牙配对码输入要求（针对没有数字键的设备）
 CONFIG_ZMK_BLE_PASSKEY_ENTRY=n
-```
+# 无操作 60s 后进入 idle（轻度待机）
+CONFIG_ZMK_IDLE_TIMEOUT=60000
+# 启用深度睡眠（deep sleep）
+CONFIG_ZMK_SLEEP=y 
+# 无操作 300s（5min）后进入深度睡眠
+CONFIG_ZMK_IDLE_SLEEP_TIMEOUT=300000 
+
 
 常见调整：
 
