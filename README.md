@@ -69,9 +69,13 @@
 ### 接线
 ![AS5600.jpg](https://m.comicplan.top/file/1780931518734_AS5600.jpg)
 ![XIAO_nRF52840_front_pinout.png](https://m.comicplan.top/file/1780931544229_XIAO_nRF52840_front_pinout.png)
+![image.png](https://m.comicplan.top/file/1781000594509_image.png)
 
+#### 电池接线
+红线接在BAT+  黑线接在BAT-，一定要记住别接反了，即使你用Super nrf52840也是一样的接线方式，上黑下红
 
 **AS5600（I²C，挂在 XIAO 的 `&xiao_i2c` 上）**
+
 
 | AS5600    | XIAO nRF52840 |      |
 | --------- | ------------- | ---- |
@@ -81,6 +85,7 @@
 | SCL       | D5 (P0.05)    | 不要接反 |
 | DIR       | GND           |      |
 | OUT / GPO | 不接            |      |
+
 磁铁:**径向充磁**,居中放在芯片正上方约 0.5–3 mm。 自己根据输出日志测试最佳距离
 > overlay 中**未设置 `power-gpios`**，传感器保持常供电，因此不需要 MOSFET 电源开关。 若编译报错说 `&xiao_i2c` 未知，把 overlay 里的 `&xiao_i2c` 改成 `&i2c0`。
 
@@ -92,6 +97,8 @@
 |---|---|---|---|
 |0|D0|P0.02|循环切换层（滚轮模式）|
 |1|D1|P0.03|轻触＝下一蓝牙档位；长按＝清除当前配对|
+还有一个按钮是直接焊接到开发板背部的RST和GND
+
 ## 验证顺序(重要)
 
 [](https://github.com/avalon-plan/zmk-config-high-resolution-scroll-wheel#%E9%AA%8C%E8%AF%81%E9%A1%BA%E5%BA%8F%E9%87%8D%E8%A6%81)
