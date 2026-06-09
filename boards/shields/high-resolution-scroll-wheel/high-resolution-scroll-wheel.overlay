@@ -1,13 +1,20 @@
+#include <zephyr/dt-bindings/gpio/gpio.h>
+#include <zephyr/dt-bindings/input/input-event-codes.h>   /* INPUT_EV_REL / INPUT_REL_* */
+#include <dt-bindings/zmk/keys.h>                          /* C_VOL_*, arrows, PG_* */
+#include <dt-bindings/zmk/input_transform.h>               /* INPUT_TRANSFORM_* (scroll direction) */
+#include <behaviors.dtsi>                                  /* &kp / &none */
 #include <input/processors.dtsi>
+#include <input/processors/zmk-input-processor-keybind.dtsi>
 
+/*
+ * AS5600 on the XIAO's I2C bus (&xiao_i2c = D4/SDA P0.04, D5/SCL P0.05).
+ * No power-gpios here: the sensor stays powered, so you DON'T need a MOSFET.
+ * If a build error says &xiao_i2c is unknown, change it to &i2c0 .
+ */
 &xiao_i2c {
-    compatible = "nordic,nrf-twi";
-    pinctrl-0 = <&i2c0_default>;
-    pinctrl-1 = <&i2c0_sleep>;
-    pinctrl-names = "default", "sleep";
     status = "okay";
 
-    as5600: as5600@36{
+    as5600: as5600@36 {
         compatible = "zmk,input-ams-as5600";
         reg = <0x36>;
         status = "okay";
@@ -16,22 +23,135 @@
 
 / {
     chosen {
-        zmk,kscan = &default_kscan;
+        zmk,kscan = &kscan;
     };
 
-    default_kscan: kscan {
+    /*
+     * Two buttons, each: one leg to the D-pin, the other leg to GND.
+     * Internal pull-up -> idle reads HIGH, pressing pulls LOW (ACTIVE_LOW).
+     *   position 0 = D0 (P0.02): cycle layers
+     *   position 1 = D1 (P0.03): tap = next BT profile, hold = clear BT bond
+     */
+    kscan: kscan_0 {
         compatible = "zmk,kscan-gpio-direct";
-        label = "default_kscan";
-
-        input-gpios = 
-            <&xiao_d 0 GPIO_ACTIVE_HIGH>,
-            <&xiao_d 1 GPIO_ACTIVE_HIGH>
+        wakeup-source;
+        input-gpios
+            = <&xiao_d 0 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>
+            , <&xiao_d 1 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>
             ;
     };
-    
+
+    input_processors {
+        /*
+         * AS5600 driver emits INPUT_REL_WHEEL, but the keybind quantizer only
+         * consumes X/Y. Remap WHEEL -> Y so it sees vertical movement.
+         * (Only used on the non-scroll layers.)
+         */
+        zip_wheel_to_y: zip_wheel_to_y {
+            compatible = "zmk,input-processor-code-mapper";
+            #input-processor-cells = <0>;
+            type = <INPUT_EV_REL>;
+            map = <INPUT_REL_WHEEL INPUT_REL_Y>;
+        };
+    };
+
+    /*
+     * Three quantizers, one per layer. bindings order is fixed: <+X -X +Y -Y>.
+     * X is unused (wheel is mapped to Y). AS5600 = 4096 counts/turn, so
+     * tick=128 -> ~32 steps per full turn. Lower tick = more sensitive.
+     * If a wheel turns the "wrong" way, swap the two +Y / -Y lines.
+     */
+    zip_keybind_vol: zip_keybind_vol {        /* layer 1: volume */
+        compatible = "zmk,input-processor-keybind";
+        #input-processor-cells = <0>;
+        track_remainders;
+        mode = <1>;
+        tick = <128>;
+        tap-ms = <10>;
+        wait-ms = <0>;
+        bindings = <&none>, <&none>, <&kp C_VOL_UP>, <&kp C_VOL_DN>;
+    };
+
+    zip_keybind_arrows: zip_keybind_arrows {  /* layer 2: left / right */
+        compatible = "zmk,input-processor-keybind";
+        #input-processor-cells = <0>;
+        track_remainders;
+        mode = <1>;
+        tick = <128>;
+        tap-ms = <10>;
+        wait-ms = <0>;
+        bindings = <&none>, <&none>, <&kp LEFT>, <&kp RIGHT>;
+    };
+
+    zip_keybind_pages: zip_keybind_pages {    /* layer 3: PageUp / PageDown */
+        compatible = "zmk,input-processor-keybind";
+        #input-processor-cells = <0>;
+        track_remainders;
+        mode = <1>;
+        tick = <128>;
+        tap-ms = <10>;
+        wait-ms = <0>;
+        bindings = <&none>, <&none>, <&kp PG_UP>, <&kp PG_DN>;
+    };
+
+    /*
+     * Base (layer 0, no override matches) = real high-res scrolling: keep WHEEL, scale.
+     *
+     * For each key layer we use the pattern te9no (keybind upstream) verified in
+     * zmkfirmware/zmk#2967 to work around the layer-override return-code bug:
+     *   1) an override that remaps WHEEL->Y and runs the quantizer, with `process-next`
+     *      so the chain continues;
+     *   2) a SEPARATE same-layer override that zeroes X/Y, so nothing leaks to HID.
+     * Because step 1 has already remapped WHEEL->Y, the base scroll scaler (which only
+     * touches WHEEL) finds nothing to send even if it still runs -> no phantom scroll.
+     *
+     * This pattern needs correct layer gating, which the zettaface/zmk fork in west.yml
+     * provides. On stock v0.3.0 the gating bug may still cause cross-layer misfires.
+     */
     as5600_listener: as5600_listener {
         compatible = "zmk,input-listener";
         device = <&as5600>;
-        input-processors = <&zip_scroll_scaler (-1) 2>;
+        input-processors = <&zip_scroll_transform INPUT_TRANSFORM_Y_INVERT &zip_scroll_scaler 1 2>;
+
+        /* layer 1: volume */
+        vol_keys {
+            layers = <1>;
+            input-processors = <&zip_wheel_to_y &zip_keybind_vol>;
+            process-next;
+        };
+        vol_zero {
+            layers = <1>;
+            input-processors = <&zip_xy_scaler 0 1>;
+        };
+
+        /* layer 2: left / right arrows */
+        arrow_keys {
+            layers = <2>;
+            input-processors = <&zip_wheel_to_y &zip_keybind_arrows>;
+            process-next;
+        };
+        arrow_zero {
+            layers = <2>;
+            input-processors = <&zip_xy_scaler 0 1>;
+        };
+
+        /* layer 3: PageUp / PageDown */
+        page_keys {
+            layers = <3>;
+            input-processors = <&zip_wheel_to_y &zip_keybind_pages>;
+            process-next;
+        };
+        page_zero {
+            layers = <3>;
+            input-processors = <&zip_xy_scaler 0 1>;
+        };
+    };
+};
+
+&gpio0 {
+    hicharge_hog {
+        gpio-hog;
+        gpios = <13 GPIO_ACTIVE_HIGH>;
+        output-low;        /* 把 P0.13 拉低 → 大电流充电 (200mA) */
     };
 };
