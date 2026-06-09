@@ -1,36 +1,64 @@
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/bt.h>
-#include <dt-bindings/zmk/pointing.h>
-#include <dt-bindings/zmk/outputs.h>
 
 / {
-    behaviors {
-        bt_one_param: bt_one_param {
-            compatible = "zmk,behavior-macro-one-param";
-            wait-ms = <0>;
-            tap-ms = <0>;
-            #binding-cells = <1>;
-            bindings = <&macro_param_1to1>, <&bt MACRO_PLACEHOLDER 0>;
+    /*
+     * &bt takes two params (e.g. BT_NXT expands to "BT_NXT_CMD 0"), so it can't
+     * go directly inside a hold-tap. Wrap each &bt command in a 0-param macro.
+     */
+    macros {
+        bt_nxt: bt_nxt {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&bt BT_NXT>;        /* switch to next paired profile */
         };
-
-        ht_bt: hold_tap_bt {
-            compatible = "zmk,behavior-hold-tap";
-            #binding-cells = <2>;
-            flavor = "hold-preferred";
-            tapping-term-ms = <400>;
-            bindings = <&bt_one_param>, <&bt_one_param>;
+        bt_clr: bt_clr {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&bt BT_CLR>;        /* clear current profile's bond */
+            /* use <&bt BT_CLR_ALL> instead to wipe ALL profiles at once */
         };
     };
-    
+
+    behaviors {
+        /*
+         * D1 button: tap -> next profile, hold (>=500ms) -> clear bond.
+         * hold = bindings[0], tap = bindings[1]. Invoked as "&bt_ht 0 0"
+         * (dummy params, since the macros take none).
+         */
+        bt_ht: bt_hold_tap {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <500>;        /* long-press threshold; bump up if too easy to clear */
+            bindings = <&bt_clr>, <&bt_nxt>;
+        };
+    };
+
     keymap {
         compatible = "zmk,keymap";
 
-        default_layer {
-            bindings = <
-                &ht_bt BT_CLR_CMD BT_NXT_CMD
-                &out OUT_TOG
-            >;
+        /*
+         * Two keys per layer:
+         *   pos 0 (D0) cycles layer:  0 scroll -> 1 vol -> 2 arrows -> 3 pages -> 0
+         *   pos 1 (D1) BT button, same on every layer.
+         * Wheel behavior per layer is set in the .overlay listener overrides.
+         */
+        scroll_layer {                 /* layer 0: mouse scroll wheel */
+            bindings = <&to 1  &bt_ht 0 0>;
+        };
+
+        volume_layer {                 /* layer 1: volume +/- */
+            bindings = <&to 2  &bt_ht 0 0>;
+        };
+
+        arrow_layer {                  /* layer 2: left / right arrows */
+            bindings = <&to 3  &bt_ht 0 0>;
+        };
+
+        page_layer {                   /* layer 3: PageUp / PageDown */
+            bindings = <&to 0  &bt_ht 0 0>;
         };
     };
 };
