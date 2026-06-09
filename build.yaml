@@ -19,8 +19,8 @@
 #
 ---
 include:
-  - board: xiao_ble//zmk
+  - board: xiao_ble
     shield: high-resolution-scroll-wheel
   # 加上下面这两行：
-  - board: xiao_ble//zmk
+  - board: xiao_ble
     shield: settings_reset
