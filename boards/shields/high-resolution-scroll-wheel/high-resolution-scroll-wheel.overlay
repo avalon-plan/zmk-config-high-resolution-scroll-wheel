@@ -22,6 +22,9 @@
 };
 
 / {
+    /* 👉 就是这一行！加上它就能通过最后的检查 */
+    compatible = "zmk,keyboard";
+
     chosen {
         zmk,kscan = &kscan;
     };
