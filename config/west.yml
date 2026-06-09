@@ -2,17 +2,22 @@ manifest:
   remotes:
     - name: zmkfirmware
       url-base: https://github.com/zmkfirmware
-    - name: adolto
-      url-base: https://github.com/adolto
-    # Additional modules containing boards/shields/custom code can be listed here as well
-    # See https://docs.zephyrproject.org/3.2.0/develop/west/manifest.html#projects
+    - name: avalon-plan          # ← 改成你的(AS5600 驱动所在账号)
+      url-base: https://github.com/avalon-plan
+    - name: zettaface            # keybind 模块 + 修过 #2967 的 zmk fork
+      url-base: https://github.com/zettaface
   projects:
+    # ZMK 换成 zettaface 的 fork:修了 input-processor 按层覆盖的返回码 bug(#2967)。
+    # 它跟随上游 main;若想回官方版,把 remote 改回 zmkfirmware、revision 改回 v0.3.0。
     - name: zmk
-      remote: zmkfirmware
+      remote: zettaface
       revision: main
       import: app/west.yml
     - name: zmk-driver-ams-as5600
-      remote: adolto
+      remote: avalon-plan          # ← 改成你的
+      revision: main
+    - name: zmk-input-processor-keybind
+      remote: zettaface
       revision: main
   self:
     path: config
