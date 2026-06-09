@@ -227,6 +227,7 @@ D1（蓝牙）:  轻触     = 切换到下一个蓝牙配对档位 (BT_NXT)
 
 主要选项在 `config/high-resolution-scroll-wheel.conf`：
 
+```conf
 # --- Pointing device + HIGH-RESOLUTION (smooth) scrolling ---
 CONFIG_ZMK_POINTING=y
 CONFIG_ZMK_POINTING_SMOOTH_SCROLLING=y
@@ -262,7 +263,7 @@ CONFIG_ZMK_IDLE_TIMEOUT=60000
 CONFIG_ZMK_SLEEP=y 
 # 无操作 300s（5min）后进入深度睡眠
 CONFIG_ZMK_IDLE_SLEEP_TIMEOUT=300000 
-
+```
 
 常见调整：
 
