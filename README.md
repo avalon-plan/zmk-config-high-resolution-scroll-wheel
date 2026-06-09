@@ -6,6 +6,7 @@
 
 一个使用 [ams AS5600](https://ams-osram.com/products/sensor-solutions/position-sensors/ams-as5600-position-sensor) 磁性旋转位置传感器的 [ZMK](https://github.com/zmkfirmware/zmk) 配置，用于“高分辨率滚轮”。  
 该项目灵感来自 [Engineer Bo](https://www.youtube.com/@engineerbo) 的视频[《无线高分辨率滚动真神奇](https://www.youtube.com/watch?v=FSy9G6bNuKA)》，应作为使用 [ZMK](https://github.com/zmkfirmware/zmk) 键盘固件的开源替代方案。
+记得先fork https://github.com/adolto/zmk-config-high-resolution-scroll-wheel和https://github.com/adolto/zmk-driver-ams-as5600
 
 目前我已经使用as5600模块和super nrf52840用于替代`adolto` XIAO nrf52840，使用nice nano克隆板子也是跑的通的，我已测试
 
@@ -385,7 +386,7 @@ high-resolution-scroll-wheel-xiao_ble-zmk.uf2
 
 
 ## 外壳
-- 现成3D模型
+- 现成3D模型 https://github.com/avalon-plan/Hi-Res-Scroll-as5600-3D-Models
 上传的是配合和打印版本，装配体可以自己选择修改，关于磁铁间隙距离，我目前使用下来是没有问题的，如果觉得不够完美那么请自己修改。
 AS5600模块的定位板的M4孔感觉比模型画的大，所以可以使用小刀轻微扩孔，
 底座可以自己修改，上盖我参考的是[Engineer Bo](https://www.youtube.com/@engineerbo) 上盖尺寸，不过由于我之前已经制作过直径为70直径的旋钮，并且NSK也是6808，轴承是现成的，因为我之前用的是EC11编码器和TTC5mm编码器，外壳参考的是geekhack上的NEO KNOB KN01
